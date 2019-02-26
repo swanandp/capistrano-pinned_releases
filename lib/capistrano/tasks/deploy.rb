@@ -6,7 +6,7 @@ namespace :deploy do
     next unless any? :linked_files
 
     on release_roles :all do |_host|
-      execute :mkdir, "-p", deploy_to.join("pinned_releases")
+      execute :mkdir, "-p", deploy_path.join(fetch(:releases_directory, "pinned_releases"))
     end
   end
 end
