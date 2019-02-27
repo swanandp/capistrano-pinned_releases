@@ -68,7 +68,7 @@ namespace :deploy do
 
   desc "Clean up old releases"
   Rake::Task["deploy:cleanup"].clear_actions
-  task :cleanup do
+  task cleanup: "check:directories" do
     on release_roles :all do |host|
       releases = capture(:ls, "-x", releases_path).split
       valid, invalid = releases.partition { |e| /^\d{14}$/ =~ e }
@@ -77,11 +77,23 @@ namespace :deploy do
 
       if valid.count >= fetch(:keep_releases)
         info t(:keeping_releases, host: host.to_s, keep_releases: fetch(:keep_releases), releases: valid.count)
-        directories = (valid - valid.last(fetch(:keep_releases))).map do |release|
-          releases_path.join(release).to_s
-        end
+        directories =
+          (valid - valid.last(fetch(:keep_releases))).map do |release|
+            releases_path.join(release).to_s
+          end.reject do |release|
+            release_name = capture(:basename, release)
+
+            if test("[ -d #{deploy_path.join('pinned_releases').join(release_name)} ]")
+              warn t(:wont_delete_pinned_release, host: host.to_s, release: release_name)
+              true
+            else
+              false
+            end
+          end
+
         if test("[ -d #{current_path} ]")
           current_release = capture(:readlink, current_path).to_s
+
           if directories.include?(current_release)
             warn t(:wont_delete_current_release, host: host.to_s)
             directories.delete(current_release)
@@ -89,6 +101,7 @@ namespace :deploy do
         else
           debug t(:no_current_release, host: host.to_s)
         end
+
         if directories.any?
           execute :rm, "-rf", *directories
         else
