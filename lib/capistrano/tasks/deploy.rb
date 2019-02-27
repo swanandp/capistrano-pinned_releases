@@ -5,27 +5,61 @@ namespace :deploy do
     desc "Check shared and release directories exist"
     task :directories do
       on release_roles :all do
-        execute :mkdir, "-p", deploy_path.join(fetch(:releases_directory, "pinned_releases"))
+        execute :mkdir, "-p", deploy_path.join("pinned_releases")
       end
     end
   end
 
-  namespace :pin do
-    desc "Create a pinned release: Symlink current release to pinned_releases"
-    task current: "deploy:check" do
+  namespace :pinned do
+    # rubocop:disable Metrics/LineLength
+    desc "Pin a given release: 'cap production deploy:pin:release RELEASE_NAME=20190220192205', without RELEASE_NAME pins the current release"
+    # rubocop:enable Metrics/LineLength
+    task pin: "deploy:check" do
       on release_roles :all do
-        real_release_path = capture :readlink, release_path.parent.join(current_path.basename)
-        release_name = capture :basename, real_release_path
-        pinned_releases_directory = deploy_path.join(fetch(:releases_directory, "pinned_releases"))
+        release_name = ENV.fetch("RELEASE_NAME", "current")
+        releases_directory = deploy_path.join("releases")
+        pinned_releases_directory = deploy_path.join("pinned_releases")
 
-        execute :ln, "-s", real_release_path, pinned_releases_directory.join(release_name)
+        if release_name == "current"
+          current_release_path = capture(:readlink, release_path.parent.join(current_path.basename))
+          current_release_name = capture(:basename, current_release_path)
+
+          pin_target = current_release_path
+          pin_name = pinned_releases_directory.join(current_release_name)
+        else
+          pin_target = releases_directory.join(release_name)
+          pin_name = pinned_releases_directory.join(release_name)
+        end
+
+        execute :ln, "-s", pin_target, pin_name
+      end
+    end
+
+    # rubocop:disable Metrics/LineLength
+    desc "Unpin a given release: 'cap production deploy:pin:remove RELEASE_NAME=20190220192205', without RELEASE_NAME unpins the current release"
+    # rubocop:enable Metrics/LineLength
+    task unpin: "deploy:check" do
+      on release_roles :all do
+        release_name = ENV.fetch("RELEASE_NAME", "current")
+        pinned_releases_directory = deploy_path.join("pinned_releases")
+
+        if release_name == "current"
+          current_release_path = capture(:readlink, release_path.parent.join(current_path.basename))
+          current_release_name = capture(:basename, current_release_path)
+
+          pin_name = pinned_releases_directory.join(current_release_name)
+        else
+          pin_name = pinned_releases_directory.join(release_name)
+        end
+
+        execute :rm, "-f", pin_name
       end
     end
 
     desc "List all currently pinned releases"
     task list: "deploy:check" do
       on release_roles :all do
-        pinned_releases_directory = deploy_path.join(fetch(:releases_directory, "pinned_releases"))
+        pinned_releases_directory = deploy_path.join("pinned_releases")
         pinned_releases = capture :ls, pinned_releases_directory
         puts pinned_releases.split(/\s+/).sort.join(", ")
       end

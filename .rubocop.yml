@@ -7,6 +7,12 @@ Style/StringLiterals:
 Style/HashSyntax:
   EnforcedStyle: ruby19
 
+Style/MultilineBlockChain:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
 Metrics/LineLength:
   Max: 120
 
