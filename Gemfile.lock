@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    capistrano-pinned_releases (0.1.0)
-      capistrano (>= 3.0)
+    capistrano-pinned_releases (1.0.0)
+      capistrano (~> 3.4)
       capistrano-bundler (~> 1.1)
 
 GEM

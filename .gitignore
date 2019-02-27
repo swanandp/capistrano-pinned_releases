@@ -6,3 +6,4 @@
 /pkg/
 /spec/reports/
 /tmp/
+capistrano-pinned_releases-*.gem
