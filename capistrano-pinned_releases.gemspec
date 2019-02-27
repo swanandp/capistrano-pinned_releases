@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
   spec.email = ["swanand.pagnis@gmail.com"]
   spec.summary = "Capistrano extension to pin and unpin releases. Pinned releases don't get deleted during cleanup"
   spec.homepage = "https://github.com/swanandp/capistrano-pinned_releases"
+  spec.required_ruby_version = "~> 2.3.1"
 
   spec.description = <<~TEXT
     Capistrano extension to pin and unpin releases. Pinned releases don't get deleted during `deploy:cleanup`.
