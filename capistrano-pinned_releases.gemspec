@@ -9,12 +9,12 @@ Gem::Specification.new do |spec|
   spec.version = Capistrano::PinnedReleases::VERSION
   spec.authors = ["Swanand Pagnis"]
   spec.email = ["swanand.pagnis@gmail.com"]
-  spec.summary = "Pin and unpin releases. Pinned releases are not deleted during cleanup"
+  spec.summary = "Capistrano extension to pin and unpin releases. Pinned releases don't get deleted during cleanup"
   spec.homepage = "https://github.com/swanandp/capistrano-pinned_releases"
 
   spec.description = <<~TEXT
-    "Pin releases: Pin an arbitrary release and prevent it from getting deleted during `deploy:cleanup`.
-    Unpin the release to unprotect it"
+    Capistrano extension to pin and unpin releases. Pinned releases don't get deleted during `deploy:cleanup`.
+    Unpin the release to unprotect it.
   TEXT
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
