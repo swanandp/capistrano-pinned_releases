@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    capistrano-pinned_releases (1.0.1)
+    capistrano-pinned_releases (1.0.2)
       capistrano (~> 3.4)
       capistrano-bundler (~> 1.1)
 
