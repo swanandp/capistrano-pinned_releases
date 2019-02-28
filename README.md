@@ -77,7 +77,7 @@ anywhere within your code.
 
 ## Development
 
-Please fork your copy, and do all your work on a appropriately named branch. After checking out the repo, run `bin/setup` to install dependencies.
+Please fork your copy, and do all your work on an appropriately named branch. After checking out the repo, run `bin/setup` to install dependencies.
 
 ## Contributing
 
