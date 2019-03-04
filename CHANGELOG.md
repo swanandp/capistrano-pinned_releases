@@ -1,4 +1,4 @@
-# 1.0.3
+# 1.1.0
 
 - Don't attempt to create a symlink if another file by that name already exists. [86c20f0](86c20f0)
 
