@@ -31,7 +31,7 @@ namespace :deploy do
           pin_name = pinned_releases_directory.join(release_name)
         end
 
-        execute :ln, "-s", pin_target, pin_name
+        execute(:ln, "-s", pin_target, pin_name) unless test("[ -d #{pin_name} ]")
       end
     end
 
