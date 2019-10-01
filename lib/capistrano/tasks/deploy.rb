@@ -88,7 +88,7 @@ namespace :deploy do
   end
 
   desc "Clean up old releases"
-  Rake::Task["deploy:cleanup"].clear_actions
+  Rake::Task["deploy:cleanup"].clear_actions if Rake::Task.include?("deploy:cleanup")
   task cleanup: "check:directories" do
     on release_roles :all do |host|
       releases = capture(:ls, "-x", releases_path).split
