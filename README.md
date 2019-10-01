@@ -45,9 +45,17 @@ The extension provides following tasks, all under the `deploy:pinned` namespace.
 
         deploy:pinned:unpin RELEASE_NAME=20190220192205
 
-    without the `RELEASE_NAME` environment variable, it pins the current release:
+    without the `RELEASE_NAME` environment variable, it unpins the current release:
     
         deploy:pinned:unpin
+
+4. **`unpin_old`**: Unpin old pinned releases; defaults to keeping the same number as `keep_releases`
+
+        deploy:pinned:unpin_old
+    
+    Helpful if running before cleanup
+       
+        after "deploy:pinned:unpin_old", "deploy:cleanup"
 
 These tasks can be run individually, but they're far more useful when used during the capistrano release lifecycle:
 

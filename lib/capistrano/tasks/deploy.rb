@@ -56,6 +56,24 @@ namespace :deploy do
       end
     end
 
+    task unpin_old: "deploy:check" do
+      on release_roles :all do
+        pinned_releases_directory = deploy_path.join("pinned_releases")
+        pinned_releases = capture :ls, pinned_releases_directory
+
+        keep_releases = fetch(:keep_releases)
+
+        if pinned_releases.count > keep_releases
+          take_count = pinned_releases.count - keep_releases
+          releases_to_unpin = pinned_releases.take(take_count)
+
+          releases_to_unpin.each do |pin_name|
+            execute :rm, "-f", pin_name
+          end
+        end
+      end
+    end
+
     desc "List all currently pinned releases"
     task list: "deploy:check" do
       on release_roles :all do
