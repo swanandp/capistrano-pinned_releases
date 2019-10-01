@@ -69,7 +69,7 @@ namespace :deploy do
           releases_to_unpin = pinned_releases.take(take_count)
 
           releases_to_unpin.each do |release_name|
-            info t(:unpinning_releases, host: host.to_s, release_name: release_name)
+            info t(:unpinning_release, host: host.to_s, release_name: release_name)
             pin_name = pinned_releases_directory.join(release_name)
             execute :rm, "-f", pin_name
           end
