@@ -12,7 +12,7 @@ namespace :deploy do
 
   namespace :pinned do
     # rubocop:disable Metrics/LineLength
-    desc "Pin a given release: 'cap production deploy:pin:release RELEASE_NAME=20190220192205', without RELEASE_NAME pins the current release"
+    desc "Pin a given release: 'cap production deploy:pinned:pin RELEASE_NAME=20190220192205', without RELEASE_NAME pins the current release"
     # rubocop:enable Metrics/LineLength
     task pin: "deploy:check" do
       on release_roles :all do
@@ -36,7 +36,7 @@ namespace :deploy do
     end
 
     # rubocop:disable Metrics/LineLength
-    desc "Unpin a given release: 'cap production deploy:pin:remove RELEASE_NAME=20190220192205', without RELEASE_NAME unpins the current release"
+    desc "Unpin a given release: 'cap production deploy:pinned:unpin RELEASE_NAME=20190220192205', without RELEASE_NAME unpins the current release"
     # rubocop:enable Metrics/LineLength
     task unpin: "deploy:check" do
       on release_roles :all do
@@ -56,15 +56,13 @@ namespace :deploy do
       end
     end
 
-    # rubocop:disable Metrics/LineLength
-    desc "Unpin all except the most recent releases: 'cap production deploy:pin:unpin_old'"
-    # rubocop:enable Metrics/LineLength
+    desc "Unpin all except the most recent releases: 'cap production deploy:pinned:unpin_old'"
     task unpin_old: "deploy:check" do
       on release_roles :all do
         pinned_releases_directory = deploy_path.join("pinned_releases")
         pinned_releases = capture(:ls, pinned_releases_directory).split(/\s+/).sort
 
-        keep_releases = fetch(:keep_releases)
+        keep_releases = fetch(:keep_pinned_releases, fetch(:keep_releases))
 
         if pinned_releases.count > keep_releases
           take_count = pinned_releases.count - keep_releases
