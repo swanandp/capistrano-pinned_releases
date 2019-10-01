@@ -68,8 +68,9 @@ namespace :deploy do
           take_count = pinned_releases.count - keep_releases
           releases_to_unpin = pinned_releases.take(take_count)
 
-          releases_to_unpin.each do |pin_name|
-            info t(:unpinning_releases, host: host.to_s, release_name: pin_name)
+          releases_to_unpin.each do |release_name|
+            info t(:unpinning_releases, host: host.to_s, release_name: release_name)
+            pin_name = pinned_releases_directory.join(release_name)
             execute :rm, "-f", pin_name
           end
         end
