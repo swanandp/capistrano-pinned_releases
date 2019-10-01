@@ -65,7 +65,7 @@ namespace :deploy do
 
         if pinned_releases.count > keep_releases
           take_count = pinned_releases.count - keep_releases
-          releases_to_unpin = pinned_releases.take(take_count)
+          releases_to_unpin = pinned_releases.sort.take(take_count)
 
           releases_to_unpin.each do |pin_name|
             execute :rm, "-f", pin_name
