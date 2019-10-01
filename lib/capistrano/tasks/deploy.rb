@@ -56,6 +56,9 @@ namespace :deploy do
       end
     end
 
+    # rubocop:disable Metrics/LineLength
+    desc "Unpin all except the most recent releases: 'cap production deploy:pin:unpin_old'"
+    # rubocop:enable Metrics/LineLength
     task unpin_old: "deploy:check" do
       on release_roles :all do
         pinned_releases_directory = deploy_path.join("pinned_releases")
