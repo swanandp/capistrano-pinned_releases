@@ -12,7 +12,7 @@ namespace :deploy do
 
   namespace :pinned do
     # rubocop:disable Metrics/LineLength
-    desc "Pin a given release: 'cap production deploy:pin:release RELEASE_NAME=20190220192205', without RELEASE_NAME pins the current release"
+    desc "Pin a given release: 'cap production deploy:pinned:pin RELEASE_NAME=20190220192205', without RELEASE_NAME pins the current release"
     # rubocop:enable Metrics/LineLength
     task pin: "deploy:check" do
       on release_roles :all do
@@ -36,7 +36,7 @@ namespace :deploy do
     end
 
     # rubocop:disable Metrics/LineLength
-    desc "Unpin a given release: 'cap production deploy:pin:remove RELEASE_NAME=20190220192205', without RELEASE_NAME unpins the current release"
+    desc "Unpin a given release: 'cap production deploy:pinned:unpin RELEASE_NAME=20190220192205', without RELEASE_NAME unpins the current release"
     # rubocop:enable Metrics/LineLength
     task unpin: "deploy:check" do
       on release_roles :all do
@@ -56,6 +56,27 @@ namespace :deploy do
       end
     end
 
+    desc "Unpin all except the most recent releases: 'cap production deploy:pinned:unpin_old'"
+    task unpin_old: "deploy:check" do
+      on release_roles :all do
+        pinned_releases_directory = deploy_path.join("pinned_releases")
+        pinned_releases = capture(:ls, pinned_releases_directory).split(/\s+/).sort
+
+        keep_releases = fetch(:keep_pinned_releases, fetch(:keep_releases))
+
+        if pinned_releases.count > keep_releases
+          take_count = pinned_releases.count - keep_releases
+          releases_to_unpin = pinned_releases.take(take_count)
+
+          releases_to_unpin.each do |release_name|
+            info t(:unpinning_release, host: host.to_s, release_name: release_name)
+            pin_name = pinned_releases_directory.join(release_name)
+            execute :rm, "-f", pin_name
+          end
+        end
+      end
+    end
+
     desc "List all currently pinned releases"
     task list: "deploy:check" do
       on release_roles :all do
@@ -67,7 +88,6 @@ namespace :deploy do
   end
 
   desc "Clean up old releases"
-  Rake::Task["deploy:cleanup"].clear_actions
   task cleanup: "check:directories" do
     on release_roles :all do |host|
       releases = capture(:ls, "-x", releases_path).split
